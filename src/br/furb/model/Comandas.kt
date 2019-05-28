@@ -1,10 +1,9 @@
 package br.furb.ktorAPI.br.furb.model
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.IntIdTable
 
-object Comandas : Table() {
-    val id = integer("id").primaryKey().autoIncrement()
-    val idUsuario = (integer("id_usuario") references Usuarios.id)
+object Comandas : IntIdTable() {
+    val idUsuario = reference("id", Usuarios)
     val produtos = varchar("produtos", 255)
     val valorTotal = decimal("valor_total", 2, 2)
 }
