@@ -1,4 +1,4 @@
-package br.furb.ktorAPI.br.furb.model
+package br.furb.ktorAPI.br.furb.table
 
 import org.jetbrains.exposed.dao.IntIdTable
 
