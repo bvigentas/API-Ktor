@@ -1,6 +1,9 @@
 package br.furb.dao
 
+import br.furb.ktorAPI.br.furb.table.Comandas
+import br.furb.ktorAPI.br.furb.table.Usuarios
 import br.furb.model.Usuario
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -10,6 +13,7 @@ class UsuarioDAO {
 
     fun createUsuario(emailUsuario: String, senhaUsuario: String) {
         DataBaseConfig.db
+        SchemaUtils.create (Usuarios, Comandas)
 
         transaction {
             addLogger(StdOutSqlLogger)
@@ -22,6 +26,7 @@ class UsuarioDAO {
 
     fun deleteUsuario(id: Int) {
         DataBaseConfig.db
+        SchemaUtils.create (Usuarios, Comandas)
 
         transaction {
             addLogger(StdOutSqlLogger)
@@ -32,6 +37,7 @@ class UsuarioDAO {
 
     fun getUsuario(id: Int): Usuario? {
         DataBaseConfig.db
+        SchemaUtils.create (Usuarios, Comandas)
 
         val usuario = transaction {
             addLogger(StdOutSqlLogger)
@@ -44,6 +50,7 @@ class UsuarioDAO {
 
     fun getUsuarios(): SizedIterable<Usuario> {
         DataBaseConfig.db
+        SchemaUtils.create (Usuarios, Comandas)
 
         val usuarios = transaction {
             addLogger(StdOutSqlLogger)
@@ -54,6 +61,7 @@ class UsuarioDAO {
 
     fun deleteUsuarios() {
         DataBaseConfig.db
+        SchemaUtils.create (Usuarios, Comandas)
 
         val usuarios = getUsuarios()
 
