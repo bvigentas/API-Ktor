@@ -3,8 +3,11 @@ package br.furb.ktorAPI.br.furb.model
 import br.furb.dao.ComandaDAO
 import br.furb.dao.UsuarioDAO
 import br.furb.ktorAPI.br.furb.table.Comandas
+import br.furb.ktorAPI.br.furb.table.Usuarios
 import br.furb.model.Comanda
 import br.furb.model.ComandaHolder
+import br.furb.model.Usuario
+import br.furb.model.UsuarioJson
 import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.response.*
@@ -23,11 +26,11 @@ fun main (args: Array<String>) {
 
         val gson = Gson()
 
-//        install(ContentNegotiation) {
-//            gson {
-//                setPrettyPrinting()
-//            }
-//        }
+       install(ContentNegotiation) {
+           gson {
+               setPrettyPrinting()
+           }
+       }
 
         val usuarioDao = UsuarioDAO()
         val comandaDao = ComandaDAO()
@@ -36,10 +39,9 @@ fun main (args: Array<String>) {
 
             get("/usuarios") {
                 try {
-                    val usuarios = usuarioDao.getUsuarios()
-                    call.respond(gson.toJson(usuarios))
+                    val usuarios = usuarioDao.getUsuarios().map { UsuarioJson(it) }
+                    call.respondText(gson.toJson(usuarios), ContentType.Application.Json)
                 } catch (e: Exception) {
-
                 }
             }
 
@@ -52,7 +54,16 @@ fun main (args: Array<String>) {
             }
 
             post("/usuarios") {
-                call.respondText("Teste3")
+                try {
+                    val post = call.receive<UsuarioJson>()
+
+                    usuarioDao.createUsuario(post.email, post.senha)
+                    call.respond(post)
+                } catch (e: Exception) {
+                    call.respond(e)
+                    e.printStackTrace()
+                }
+
             }
 
             put("/usuarios/{id}") {

@@ -48,13 +48,13 @@ class UsuarioDAO {
         return usuario
     }
 
-    fun getUsuarios(): SizedIterable<Usuario> {
+    fun getUsuarios(): List<Usuario> {
         DataBaseConfig.db
 
         val usuarios = transaction {
             SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
-            return@transaction Usuario.all()
+            return@transaction Usuario.all().iterator().asSequence().toList()
         }
         return usuarios
     }
