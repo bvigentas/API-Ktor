@@ -8,9 +8,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object DataBaseConfig {
 
     val db by lazy() {
-        Database.connect("jdbc:postgresql://localhost:12346/test",
+        Database.connect("jdbc:postgresql://localhost:5432/postgres",
                      driver = "org.postgresql.Driver",
-                     user = "root",
+                     user = "postgres",
                      password = "root")
     }
 }

@@ -3,6 +3,7 @@ package br.furb.dao
 import br.furb.ktorAPI.br.furb.table.Comandas
 import br.furb.ktorAPI.br.furb.table.Usuarios
 import br.furb.model.Comanda
+import br.furb.model.ComandaHolder
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SizedIterable
@@ -15,9 +16,9 @@ class ComandaDAO {
 
     fun getComandas(): SizedIterable<Comanda> {
         DataBaseConfig.db
-        SchemaUtils.create (Usuarios, Comandas)
 
         val comandas = transaction {
+            SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             return@transaction Comanda.all()
         }
@@ -26,36 +27,36 @@ class ComandaDAO {
 
     fun getComanda(id: Int): Comanda? {
         DataBaseConfig.db
-        SchemaUtils.create(Usuarios, Comandas)
 
-        val comanda = transaction {
+        transaction {
+            SchemaUtils.create(Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
-            return@transaction Comanda.findById(id)
+            val comanda =  Comanda.findById(id)
+            return@transaction comanda
         }
-        return comanda
+        return null
     }
 
     fun deleteComanda(id: Int) {
         DataBaseConfig.db
-        SchemaUtils.create (Usuarios, Comandas)
 
         transaction {
+            SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             val usuario = Comanda.findById(id)
             usuario?.delete()
         }
     }
 
-    fun createComanda(idUsuarioComanda: EntityID<Int>, produtosComanda: String, valorComanda: BigDecimal) {
+    fun createComanda(comanda: Comanda) {
         DataBaseConfig.db
-        SchemaUtils.create (Usuarios, Comandas)
-
         transaction {
+            SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             Comanda.new {
-                idUsuario = idUsuarioComanda
-                produtos = produtosComanda
-                valorTotal = valorComanda
+                idUsuario = comanda.idUsuario
+                produtos = comanda.produtos
+                valorTotal = comanda.valorTotal
             }
         }
     }

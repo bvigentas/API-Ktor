@@ -13,9 +13,9 @@ class UsuarioDAO {
 
     fun createUsuario(emailUsuario: String, senhaUsuario: String) {
         DataBaseConfig.db
-        SchemaUtils.create (Usuarios, Comandas)
 
         transaction {
+            SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             Usuario.new {
                 email = emailUsuario
@@ -26,9 +26,9 @@ class UsuarioDAO {
 
     fun deleteUsuario(id: Int) {
         DataBaseConfig.db
-        SchemaUtils.create (Usuarios, Comandas)
 
         transaction {
+            SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             val usuario = Usuario.findById(id)
             usuario?.delete()
@@ -37,9 +37,9 @@ class UsuarioDAO {
 
     fun getUsuario(id: Int): Usuario? {
         DataBaseConfig.db
-        SchemaUtils.create (Usuarios, Comandas)
 
         val usuario = transaction {
+            SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             val usuario = Usuario.findById(id)
             return@transaction usuario
@@ -50,9 +50,9 @@ class UsuarioDAO {
 
     fun getUsuarios(): SizedIterable<Usuario> {
         DataBaseConfig.db
-        SchemaUtils.create (Usuarios, Comandas)
 
         val usuarios = transaction {
+            SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             return@transaction Usuario.all()
         }
@@ -61,12 +61,12 @@ class UsuarioDAO {
 
     fun deleteUsuarios() {
         DataBaseConfig.db
-        SchemaUtils.create (Usuarios, Comandas)
 
         val usuarios = getUsuarios()
 
         for (usuario in usuarios) {
             transaction {
+                SchemaUtils.create (Usuarios, Comandas)
                 addLogger(StdOutSqlLogger)
                 usuario.delete()
             }
