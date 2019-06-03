@@ -8,7 +8,7 @@
 | Intellij                                         | 2018.3.4            |
 | Postgre                                          | 9.1-901-1.jdbc4     |
 
-## Serviços
+## Endpoints
 
 ### Get(/usuarios)
 
