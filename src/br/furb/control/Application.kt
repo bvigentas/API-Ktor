@@ -39,11 +39,14 @@ fun main (args: Array<String>) {
             }
 
             get("/usuarios/{id}") {
-                call.respondText("Teste1")
-            }
 
-            get("/comandas") {
-                call.respondText("Teste2")
+                try {
+                    // val usuario = usuarioDao.getUsuarios().map { UsuarioJson(it) }.get(call.parameters["id"]!!.toInt() - 1)
+                    val usuario = usuarioDao.getUsuario(call.parameters["id"]!!.toInt())
+                    call.respond(gson.toJson(usuario))
+                }catch (e: Exception){
+                    call.respond(e)
+                }
             }
 
             post("/usuarios") {
@@ -54,19 +57,45 @@ fun main (args: Array<String>) {
                 } catch (e: Exception) {
                     call.respond(e)
                 }
-
             }
 
             put("/usuarios/{id}") {
-                call.respondText("Teste4")
+                try {
+                    var parameters = call.receive<UsuarioJson>()
+                    val usuario = usuarioDao.updateUsuario(call.parameters["id"]!!.toInt(), parameters.email, parameters.senha)
+
+                    call.respond(usuario)
+
+                } catch (e: Exception) {
+                    call.respondText(e.toString())
+                }
             }
 
             delete("/usuarios/{id}") {
-                call.respondText("Teste5")
+                try {
+                    usuarioDao.deleteUsuario(call.parameters["id"]!!.toInt())
+                    call.respond(mapOf(true to true))
+                } catch (e: Exception) {
+                    call.respondText(e.toString())
+                }
             }
 
             delete("/usuarios") {
-                call.respondText("Teste6")
+                try {
+                    usuarioDao.deleteUsuarios()
+                    call.respond(mapOf(true to true))
+                } catch (e: Exception) {
+                    call.respondText(e.toString())
+                }
+            }
+
+            get("/comandas") {
+                try{
+                    val comandas = comandaDao.getComandas().map { ComandaJson(it) }
+                    call.respond(comandas)
+                }catch (e: Exception) {
+                    call.respond(e)
+                }
             }
 
             get("/comandas/{id}") {
@@ -87,11 +116,16 @@ fun main (args: Array<String>) {
 //                    call.respond(e)
                     e.printStackTrace()
                 }
-
             }
 
             put("comandas/{id}") {
                 try {
+                    var parameters = call.receive<ComandaJson>()
+                    val comanda = comandaDao.updateComanda(call.parameters["id"]!!.toInt(), parameters.produtos, parameters.valorTotal)
+
+                    // mudar a saida aqui - colocar string e to json
+
+                    call.respond(comanda)
 
                 } catch (e: Exception) {
                     call.respondText(e.toString())
