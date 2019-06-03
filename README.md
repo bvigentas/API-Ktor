@@ -7,3 +7,13 @@
 | Exposed                                          | 0.13.7              |
 | Intellij                                         | 2018.3.4            |
 | Postgre                                          | 9.1-901-1.jdbc4     |
+
+## Serviços
+
+### Get(/usuarios)
+
+### Post(/usuarios)
+
+### Put(/usuarios/{id})
+
+### Get(/usuarios/{id})
