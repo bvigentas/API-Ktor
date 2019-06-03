@@ -2,12 +2,7 @@ package br.furb.ktorAPI.br.furb.model
 
 import br.furb.dao.ComandaDAO
 import br.furb.dao.UsuarioDAO
-import br.furb.ktorAPI.br.furb.table.Comandas
-import br.furb.ktorAPI.br.furb.table.Usuarios
-import br.furb.model.Comanda
-import br.furb.model.ComandaHolder
-import br.furb.model.Usuario
-import br.furb.model.UsuarioJson
+import br.furb.model.*
 import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.response.*
@@ -18,8 +13,6 @@ import io.ktor.gson.*
 import io.ktor.features.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import org.jetbrains.exposed.dao.EntityID
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 fun main (args: Array<String>) {
     embeddedServer(Netty, port = 8083) {
@@ -40,7 +33,7 @@ fun main (args: Array<String>) {
             get("/usuarios") {
                 try {
                     val usuarios = usuarioDao.getUsuarios().map { UsuarioJson(it) }
-                    call.respondText(gson.toJson(usuarios), ContentType.Application.Json)
+                    call.respond(usuarios)
                 } catch (e: Exception) {
                 }
             }
@@ -55,13 +48,11 @@ fun main (args: Array<String>) {
 
             post("/usuarios") {
                 try {
-                    val post = call.receive<UsuarioJson>()
-
-                    usuarioDao.createUsuario(post.email, post.senha)
-                    call.respond(post)
+                    var usuario = call.receive<UsuarioJson>()
+                    usuario = usuarioDao.createUsuario(usuario.email, usuario.senha)
+                    call.respond(usuario)
                 } catch (e: Exception) {
                     call.respond(e)
-                    e.printStackTrace()
                 }
 
             }
@@ -89,10 +80,9 @@ fun main (args: Array<String>) {
 
             post("/comandas") {
                 try {
-                    val post = call.receive<ComandaHolder>()
-
-//                    comandaDao.createComanda(post)
-                    call.respond(post)
+                    var comanda = call.receive<ComandaJson>()
+                    comanda = comandaDao.createComanda(comanda.idUsuario, comanda.produtos, comanda.valorTotal)
+                    call.respond(comanda)
                 } catch (e: Exception) {
 //                    call.respond(e)
                     e.printStackTrace()
@@ -101,7 +91,11 @@ fun main (args: Array<String>) {
             }
 
             put("comandas/{id}") {
-                
+                try {
+
+                } catch (e: Exception) {
+                    call.respondText(e.toString())
+                }
             }
 
             delete("/comandas/{id}"){

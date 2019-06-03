@@ -14,9 +14,6 @@ class Comanda(id: EntityID<Int>) : IntEntity(id) {
     var valorTotal by Comandas.valorTotal
 }
 
-data class ComandaHolder(
-    val id: Int,
-    val idUsuario: Int,
-    val produtos: String,
-    val valotTotal: BigDecimal
-)
+class ComandaJson(val id: Int = 0, val idUsuario: Int = 0, val produtos: String = "", val valorTotal: BigDecimal = BigDecimal(0)){
+    constructor(comanda: Comanda): this(comanda.id.value, comanda.idUsuario.value, comanda.produtos, comanda.valorTotal)
+}
