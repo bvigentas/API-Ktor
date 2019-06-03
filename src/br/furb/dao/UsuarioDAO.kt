@@ -3,6 +3,7 @@ package br.furb.dao
 import br.furb.ktorAPI.br.furb.table.Comandas
 import br.furb.ktorAPI.br.furb.table.Usuarios
 import br.furb.model.Usuario
+import br.furb.model.UsuarioJson
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -11,17 +12,19 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class UsuarioDAO {
 
-    fun createUsuario(emailUsuario: String, senhaUsuario: String) {
+    fun createUsuario(emailUsuario: String, senhaUsuario: String): UsuarioJson {
         DataBaseConfig.db
 
-        transaction {
+        val usuario = transaction {
             SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
-            Usuario.new {
+            return@transaction Usuario.new {
                 email = emailUsuario
                 senha = senhaUsuario
             }
         }
+
+        return UsuarioJson(usuario.id.value, usuario.email, usuario.senha)
     }
 
     fun deleteUsuario(id: Int) {
