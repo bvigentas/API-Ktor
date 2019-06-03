@@ -5,7 +5,6 @@ import br.furb.ktorAPI.br.furb.table.Usuarios
 import br.furb.model.Usuario
 import br.furb.model.UsuarioJson
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -38,17 +37,16 @@ class UsuarioDAO {
         }
     }
 
-    fun getUsuario(id: Int): Usuario? {
+    fun getUsuario(id: Int): UsuarioJson {
         DataBaseConfig.db
 
         val usuario = transaction {
             SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
-            val usuario = Usuario.findById(id)
-            return@transaction usuario
+            return@transaction Usuario.findById(id)
         }
 
-        return usuario
+        return UsuarioJson(usuario!!.id.value, usuario!!.email, usuario.senha)
     }
 
     fun getUsuarios(): List<Usuario> {
@@ -74,5 +72,23 @@ class UsuarioDAO {
                 usuario.delete()
             }
         }
+    }
+
+    fun updateUsuario(id: Int, emailUsuario: String, senhaUsuario: String): UsuarioJson {
+
+        DataBaseConfig.db
+
+        val usuario = transaction {
+            SchemaUtils.create(Usuarios, Comandas)
+            addLogger(StdOutSqlLogger)
+            val user =  Usuario.findById(id)
+
+            user!!.email = emailUsuario
+            user!!.senha = senhaUsuario
+
+            return@transaction UsuarioJson(user.id.value, user.email, user.senha)
+        }
+
+        return UsuarioJson(usuario.id, usuario.email, usuario.senha)
     }
 }

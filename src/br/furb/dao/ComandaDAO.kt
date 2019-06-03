@@ -24,15 +24,17 @@ class ComandaDAO {
         return comandas
     }
 
-    fun getComanda(id: Int) {
+    fun getComanda(id: Int) : ComandaJson {
         DataBaseConfig.db
 
-        transaction {
+        val comanda_ret = transaction {
             SchemaUtils.create(Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             val comanda =  Comanda.findById(id)
             return@transaction comanda
         }
+
+        return ComandaJson(comanda_ret!!.id.value, comanda_ret.idUsuario.value, comanda_ret.produtos, comanda_ret.valorTotal)
     }
 
     fun deleteComanda(id: Int) {
@@ -60,4 +62,22 @@ class ComandaDAO {
 
         return ComandaJson(comanda.id.value, comanda.idUsuario.value, comanda.produtos, comanda.valorTotal)
     }
+
+    fun updateComanda(id: Int, produtosComanda: String, valorTotalComanda: BigDecimal) : ComandaJson{
+
+        DataBaseConfig.db
+
+        val comanda_ret = transaction {
+            SchemaUtils.create(Usuarios, Comandas)
+            addLogger(StdOutSqlLogger)
+            val comanda =  Comanda.findById(id)
+
+            comanda!!.produtos = produtosComanda
+            comanda!!.valorTotal = valorTotalComanda
+
+            return@transaction ComandaJson(comanda.id.value, comanda.idUsuario.value, comanda.produtos, comanda.valorTotal)
+        }
+        return ComandaJson(comanda_ret.id, comanda_ret.idUsuario, comanda_ret.produtos, comanda_ret.valorTotal)
+    }
+
 }
