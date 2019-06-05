@@ -1,0 +1,163 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "API Ktor"
+  description: Administra a movimentação de usuários e comandas.
+host: "localhost:8080"
+basePath: "/RestAPIFurb/"
+tags:
+- name: "usuarios"
+  description: "Operações sobre usuários"
+schemes:
+- "https"
+- "http"
+paths:
+  /usuarios:
+    get:
+      tags:
+      - "usuarios"
+      summary: "Consulta usuários"
+      description: "Consulta todos os usuários."
+      operationId: "getUsuarios"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+        200:
+          description: "Consulta efetuada com sucesso"
+          schema:
+            $ref: "#/definitions/Usuario"
+        400:
+          description: Requisição inválida
+        401:
+          description: Requisição não autorizada
+        500:
+          description: Erro no servidor
+  /usuarios/{id}:
+    get:
+      tags:
+      - "usuarios"
+      summary: "Consulta usuário"
+      description: "Consulta o usuário"
+      operationId: "getUsuario"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "integer"
+          description: "Id do usuário"
+      responses:
+        200:
+          description: "Consulta efetuada com sucesso"
+          schema:
+            $ref: "#/definitions/Usuario"
+        400:
+          description: Requisição inválida
+        401:
+          description: Requisição não autorizada
+        500:
+          description: Erro no servidor
+  /usuario:
+    post:
+      tags:
+      - "usuarios"
+      summary: "Cadastra usuário"
+      description: "Cadastra um novo usuário."
+      operationId: "createUsuario"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/Usuario"
+      responses:
+        201:
+          description: Cadastro efetuado com sucesso
+          schema:
+            $ref: "#/definitions/Usuario"
+        400:
+          description: Requisição inválida
+        500:
+          description: Erro interno no servidor
+  /usuario/{id}:
+    put:
+      tags:
+      - "usuarios"
+      summary: "Edita usuário"
+      description: "Edita um usuário."
+      operationId: "updateUsuario"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        description: "Id do usuário"
+      responses:
+        400:
+          description: Requisição inválida
+        404:
+          description: Usuários não está funcionando
+  /usuari/{id}:
+    delete:
+      tags:
+      - "usuarios"
+      summary: "Deleta usuário"
+      description: "Deleta um usuário."
+      operationId: "deleteUsuario"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id do usuário"
+        required: true
+        type: "integer"
+      responses:
+        400:
+          description: Requisição inválida
+        404:
+          description: Usuários não está funcionando
+  /usuari:
+    delete:
+      tags:
+      - "usuarios"
+      summary: "Deleta usuários"
+      description: "Deleta todos os usuários."
+      operationId: "deleteUsuarios"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+        400:
+          description: Requisição inválida
+        404:
+          description: Usuários não está funcionando
+securityDefinitions:
+  BasicAuth:
+    type: basic
+security:
+  - BasicAuth: []
+definitions:
+  Usuario:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      email:
+        type: "string"
+      senha:
+        type: "string"
