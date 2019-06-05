@@ -57,116 +57,119 @@ fun main (args: Array<String>) {
         val comandaDao = ComandaDAO()
 
         routing {
-
-            get("/usuarios") {
-                try {
-                    val usuarios = usuarioDao.getUsuarios().map { UsuarioJson(it) }
-                    call.respond(usuarios)
-                } catch (e: Exception) {
+            route("/RestAPIFurb") {
+                get("/usuarios") {
+                    try {
+                        val usuarios = usuarioDao.getUsuarios().map { UsuarioJson(it) }
+                        call.respond(usuarios)
+                    } catch (e: Exception) {
+                    }
                 }
-            }
 
-            get("/usuarios/{id}") {
+                get("/usuarios/{id}") {
 
-                try {
-                    // val usuario = usuarioDao.getUsuarios().map { UsuarioJson(it) }.get(call.parameters["id"]!!.toInt() - 1)
-                    val usuario = usuarioDao.getUsuario(call.parameters["id"]!!.toInt())
-                    call.respond(usuario)
-                }catch (e: Exception){
-                    call.respond(e)
+                    try {
+                        // val usuario = usuarioDao.getUsuarios().map { UsuarioJson(it) }.get(call.parameters["id"]!!.toInt() - 1)
+                        val usuario = usuarioDao.getUsuario(call.parameters["id"]!!.toInt())
+                        call.respond(usuario)
+                    } catch (e: Exception) {
+                        call.respond(e)
+                    }
                 }
-            }
 
-            post("/usuarios") {
-                try {
-                    var usuario = call.receive<UsuarioJson>()
-                    usuario = usuarioDao.createUsuario(usuario.email, usuario.senha)
-                    call.respond(usuario)
-                } catch (e: Exception) {
-                    call.respond(e)
+                post("/usuarios") {
+                    try {
+                        var usuario = call.receive<UsuarioJson>()
+                        usuario = usuarioDao.createUsuario(usuario.email, usuario.senha)
+                        call.respond(usuario)
+                    } catch (e: Exception) {
+                        call.respond(e)
+                    }
                 }
-            }
 
-            put("/usuarios/{id}") {
-                try {
-                    var parameters = call.receive<UsuarioJson>()
-                    val usuario = usuarioDao.updateUsuario(call.parameters["id"]!!.toInt(), parameters.email, parameters.senha)
+                put("/usuarios/{id}") {
+                    try {
+                        var parameters = call.receive<UsuarioJson>()
+                        val usuario = usuarioDao.updateUsuario(
+                            call.parameters["id"]!!.toInt(),
+                            parameters.email,
+                            parameters.senha
+                        )
 
-                    call.respond(usuario)
+                        call.respond(usuario)
 
-                } catch (e: Exception) {
-                    call.respondText(e.toString())
+                    } catch (e: Exception) {
+                        call.respondText(e.toString())
+                    }
                 }
-            }
 
-            delete("/usuarios/{id}") {
-                try {
-                    usuarioDao.deleteUsuario(call.parameters["id"]!!.toInt())
-                    call.respond(mapOf(true to true))
-                } catch (e: Exception) {
-                    call.respondText(e.toString())
+                delete("/usuarios/{id}") {
+                    try {
+                        usuarioDao.deleteUsuario(call.parameters["id"]!!.toInt())
+                        call.respond(mapOf(true to true))
+                    } catch (e: Exception) {
+                        call.respondText(e.toString())
+                    }
                 }
-            }
 
-            delete("/usuarios") {
-                try {
-                    usuarioDao.deleteUsuarios()
-                    call.respond(mapOf(true to true))
-                } catch (e: Exception) {
-                    call.respondText(e.toString())
+                delete("/usuarios") {
+                    try {
+                        usuarioDao.deleteUsuarios()
+                        call.respond(mapOf(true to true))
+                    } catch (e: Exception) {
+                        call.respondText(e.toString())
+                    }
                 }
-            }
 
-            get("/comandas") {
-                try{
-                    val comandas = comandaDao.getComandas().map { ComandaJson(it) }
-                    call.respond(comandas)
-                }catch (e: Exception) {
-                    call.respond(e)
+
+
+                get("/comandas/{id}") {
+                    try {
+                        val comanda = comandaDao.getComanda(call.parameters["id"]!!.toInt())
+                        call.respond(comanda)
+                    } catch (e: Exception) {
+
+                    }
                 }
-            }
 
-            get("/comandas/{id}") {
-                try {
-                    val comanda = comandaDao.getComanda(call.parameters["id"]!!.toInt())
-                    call.respond(comanda)
-                } catch (e: Exception) {
-
+                get("/comandas") {
+                    try {
+                        val comandas = comandaDao.getComandas().map { ComandaJson(it) }
+                        call.respond(comandas)
+                    } catch (e: Exception) {
+                        call.respond(e)
+                    }
                 }
-            }
 
-            post("/comandas") {
-                try {
-                    var comanda = call.receive<ComandaJson>()
-                    comanda = comandaDao.createComanda(comanda.idUsuario, comanda.produtos, comanda.valorTotal)
-                    call.respond(comanda)
-                } catch (e: Exception) {
+                put("/comandas/{id}") {
+                    try {
+                        var parameters = call.receive<ComandaJson>()
+                        val comanda = comandaDao.updateComanda(
+                            call.parameters["id"]!!.toInt(),
+                            parameters.produtos,
+                            parameters.valorTotal
+                        )
+
+                        // mudar a saida aqui - colocar string e to json
+
+                        call.respond(comanda)
+
+                    } catch (e: Exception) {
+                        call.respondText(e.toString())
+                    }
+                }
+
+                post("/comandas") {
+                    try {
+                        var comanda = call.receive<ComandaJson>()
+                        comanda = comandaDao.createComanda(comanda.idUsuario, comanda.produtos, comanda.valorTotal)
+                        call.respond(comanda)
+                    } catch (e: Exception) {
 //                    call.respond(e)
-                    e.printStackTrace()
+                        e.printStackTrace()
+                    }
                 }
-            }
 
-            put("comandas/{id}") {
-                try {
-                    var parameters = call.receive<ComandaJson>()
-                    val comanda = comandaDao.updateComanda(call.parameters["id"]!!.toInt(), parameters.produtos, parameters.valorTotal)
-
-                    // mudar a saida aqui - colocar string e to json
-
-                    call.respond(comanda)
-
-                } catch (e: Exception) {
-                    call.respondText(e.toString())
-                }
-            }
-
-            delete("/comandas/{id}"){
-                try {
-                    comandaDao.deleteComanda(call.parameters["id"]!!.toInt())
-                    call.respond(mapOf(true to true))
-                } catch (e: Exception) {
-                    call.respondText(e.toString())
-                }
             }
 
             authenticate("google-oauth") {
