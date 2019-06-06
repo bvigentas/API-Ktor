@@ -7,7 +7,7 @@
 | Exposed                                          | 0.13.7              |
 | Intellij                                         | 2018.3.4            |
 | Postgre                                          | 11.3                |
-
+<br />
 
 ## Endpoints
 
@@ -18,7 +18,7 @@
 ### Put(/usuarios/{id})
 
 ### Get(/usuarios/{id})
-
+<br />
 
 ## Guia Ferramentas
 
