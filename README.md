@@ -8,7 +8,7 @@
 | Intellij                                         | 2018.3.4            |
 | Postgre                                          | 11.3                |
 
-<br />
+
 ## Endpoints
 
 ### Get(/usuarios)
@@ -19,7 +19,7 @@
 
 ### Get(/usuarios/{id})
 
-<br />
+
 ## Guia Ferramentas
 
 ### Kotlin
