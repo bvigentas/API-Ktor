@@ -9,9 +9,20 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.IOException
 import java.math.BigDecimal
 
 class ComandaDAO {
+
+    fun authenticateComanda(produtosComanda: String, valorTotalComanda: BigDecimal){
+        if(produtosComanda.length < 3)
+        {
+            throw IOException("Nome de produto inválido")
+        }
+        else if(valorTotalComanda < BigDecimal(0)) {
+            throw IOException("Valor total da comanda inválido")
+        }
+    }
 
     fun getComandas(): List<Comanda> {
         DataBaseConfig.db
@@ -34,7 +45,7 @@ class ComandaDAO {
             return@transaction comanda
         }
 
-        return ComandaJson(comanda_ret!!.id.value, comanda_ret.idUsuario.value, comanda_ret.produtos, comanda_ret.valorTotal)
+        return ComandaJson(comanda_ret!!.id.value, comanda_ret.idusuario.value, comanda_ret.produtos, comanda_ret.valorTotal)
     }
 
     fun deleteComanda(id: Int) {
@@ -49,21 +60,27 @@ class ComandaDAO {
     }
 
     fun createComanda(idUsuarioComanda: Int, produtosComanda: String, valorTotalComanda: BigDecimal): ComandaJson {
+
+        authenticateComanda(produtosComanda, valorTotalComanda)
+
         DataBaseConfig.db
         val comanda = transaction {
             SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             return@transaction Comanda.new {
-                idUsuario = EntityID(idUsuarioComanda, Usuarios)
+                idusuario = EntityID(idUsuarioComanda, Usuarios)
                 produtos = produtosComanda
                 valorTotal = valorTotalComanda
             }
         }
 
-        return ComandaJson(comanda.id.value, comanda.idUsuario.value, comanda.produtos, comanda.valorTotal)
+        return ComandaJson(comanda.id.value, comanda.idusuario.value, comanda.produtos, comanda.valorTotal)
     }
 
     fun updateComanda(id: Int, produtosComanda: String?, valorTotalComanda: BigDecimal?) : ComandaJson{
+
+        if(produtosComanda != null && valorTotalComanda != null)
+            authenticateComanda(produtosComanda, valorTotalComanda)
 
         DataBaseConfig.db
         val comanda_ret = transaction {
@@ -80,9 +97,9 @@ class ComandaDAO {
                 comanda.valorTotal = valorTotalComanda!!
             }
 
-            return@transaction ComandaJson(comanda.id.value, comanda.idUsuario.value, comanda.produtos, comanda.valorTotal)
+            return@transaction ComandaJson(comanda.id.value, comanda.idusuario.value, comanda.produtos, comanda.valorTotal)
         }
-        return ComandaJson(comanda_ret.id, comanda_ret.idUsuario, comanda_ret.produtos, comanda_ret.valorTotal)
+        return ComandaJson(comanda_ret.id, comanda_ret.idusuario, comanda_ret.produtos, comanda_ret.valorTotal)
     }
 
 }

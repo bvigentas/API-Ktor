@@ -8,10 +8,24 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.IOException
 
 class UsuarioDAO {
 
+    fun authenticateUsuario(emailUsuario: String, senhaUsuario: String){
+        if(emailUsuario.equals("") ||  !emailUsuario.contains("@"))
+        {
+            throw IOException("Email inválido")
+        }
+        else if(senhaUsuario.length <= 5 ) {
+            throw IOException("Senha inválida")
+        }
+    }
+
     fun createUsuario(emailUsuario: String, senhaUsuario: String): UsuarioJson {
+
+        authenticateUsuario(emailUsuario, senhaUsuario)
+
         DataBaseConfig.db
 
         val usuario = transaction {
@@ -75,6 +89,9 @@ class UsuarioDAO {
     }
 
     fun updateUsuario(id: Int, emailUsuario: String?, senhaUsuario: String?): UsuarioJson {
+
+        if(emailUsuario != null && senhaUsuario != null)
+            authenticateUsuario(emailUsuario, senhaUsuario)
 
         DataBaseConfig.db
         val usuario = transaction {

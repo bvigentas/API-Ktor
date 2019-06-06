@@ -24,6 +24,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.sessions.*
 import io.ktor.util.hex
 import io.ktor.websocket.WebSockets
+import java.io.IOException
 
 class MySession(val userId: String)
 
@@ -82,7 +83,10 @@ fun main (args: Array<String>) {
                         var usuario = call.receive<UsuarioJson>()
                         usuario = usuarioDao.createUsuario(usuario.email, usuario.senha)
                         call.respond(usuario)
-                    } catch (e: Exception) {
+                    } catch(e: IOException){
+                        call.respond("" + e.message)
+                    }
+                    catch (e: Exception) {
                         call.respond(e)
                     }
                 }
@@ -98,7 +102,10 @@ fun main (args: Array<String>) {
 
                         call.respond(usuario)
 
-                    } catch (e: Exception) {
+                    } catch(e: IOException){
+                        call.respond("" + e.message)
+                    }
+                    catch (e: Exception) {
                         call.respondText(e.toString())
                         e.printStackTrace()
                     }
@@ -163,7 +170,7 @@ fun main (args: Array<String>) {
                 post("/comandas") {
                     try {
                         var comanda = call.receive<ComandaJson>()
-                        comanda = comandaDao.createComanda(comanda.idUsuario, comanda.produtos, comanda.valorTotal)
+                        comanda = comandaDao.createComanda(comanda.idusuario, comanda.produtos, comanda.valorTotal)
                         call.respond(comanda)
                     } catch (e: Exception) {
 //                    call.respond(e)
