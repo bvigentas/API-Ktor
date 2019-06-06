@@ -63,17 +63,22 @@ class ComandaDAO {
         return ComandaJson(comanda.id.value, comanda.idUsuario.value, comanda.produtos, comanda.valorTotal)
     }
 
-    fun updateComanda(id: Int, produtosComanda: String, valorTotalComanda: BigDecimal) : ComandaJson{
+    fun updateComanda(id: Int, produtosComanda: String?, valorTotalComanda: BigDecimal?) : ComandaJson{
 
         DataBaseConfig.db
-
         val comanda_ret = transaction {
             SchemaUtils.create(Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
-            val comanda =  Comanda.findById(id)
+            val comanda: Comanda = Comanda.findById(id)!!
 
-            comanda!!.produtos = produtosComanda
-            comanda!!.valorTotal = valorTotalComanda
+            if (produtosComanda == "" || valorTotalComanda == BigDecimal(0)) {
+                val comandaNoBanco = Comanda.findById(id)
+                if (valorTotalComanda == BigDecimal(0)) comanda.valorTotal = comandaNoBanco!!.valorTotal else comanda.valorTotal = valorTotalComanda!!
+                if (produtosComanda == "") comanda.produtos = comandaNoBanco!!.produtos else comanda.produtos = produtosComanda!!
+            } else {
+                comanda.produtos = produtosComanda!!
+                comanda.valorTotal = valorTotalComanda!!
+            }
 
             return@transaction ComandaJson(comanda.id.value, comanda.idUsuario.value, comanda.produtos, comanda.valorTotal)
         }

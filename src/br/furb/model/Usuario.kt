@@ -12,6 +12,6 @@ class Usuario(id: EntityID<Int>) : IntEntity(id) {
     var senha by Usuarios.senha
 }
 
-class UsuarioJson(val id: Int, val email: String, val senha: String){
+class UsuarioJson(val id: Int = 0, val email: String = "", val senha: String = ""){
     constructor(user: Usuario): this(user.id.value, user.email, user.senha)
 }

@@ -100,6 +100,7 @@ fun main (args: Array<String>) {
 
                     } catch (e: Exception) {
                         call.respondText(e.toString())
+                        e.printStackTrace()
                     }
                 }
 
@@ -167,6 +168,15 @@ fun main (args: Array<String>) {
                     } catch (e: Exception) {
 //                    call.respond(e)
                         e.printStackTrace()
+                    }
+                }
+
+                delete("/comandas/{id}") {
+                    try {
+                        comandaDao.deleteComanda(call.parameters["id"]!!.toInt())
+                        call.respond(mapOf("success" to mapOf("text" to "comanda removida")))
+                    } catch (e: Exception) {
+                        call.respondText(e.toString())
                     }
                 }
 

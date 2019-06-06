@@ -74,19 +74,25 @@ class UsuarioDAO {
         }
     }
 
-    fun updateUsuario(id: Int, emailUsuario: String, senhaUsuario: String): UsuarioJson {
+    fun updateUsuario(id: Int, emailUsuario: String?, senhaUsuario: String?): UsuarioJson {
 
         DataBaseConfig.db
-
         val usuario = transaction {
+
             SchemaUtils.create(Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
-            val user =  Usuario.findById(id)
+            val user: Usuario = Usuario.findById(id)!!
 
-            user!!.email = emailUsuario
-            user!!.senha = senhaUsuario
+            if (senhaUsuario == "" || emailUsuario == "") {
+                val usuarioNoBanco = Usuario.findById(id)
+                if (emailUsuario == "") user.email = usuarioNoBanco!!.email else user.email = emailUsuario!!
+                if (senhaUsuario == "") user.senha = usuarioNoBanco!!.senha else user.senha = senhaUsuario!!
+            } else {
+                user.email = emailUsuario!!
+                user.senha = senhaUsuario!!
+            }
 
-            return@transaction UsuarioJson(user.id.value, user.email, user.senha)
+            return@transaction UsuarioJson(user!!.id.value, user.email, user.senha)
         }
 
         return UsuarioJson(usuario.id, usuario.email, usuario.senha)
