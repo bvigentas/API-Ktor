@@ -55,13 +55,12 @@ Build tool used in the project.<br />
 To run the OAuth correctly, some configurations are needed.
 First you need to have an Google API Credentials. If you don't have one, follow the next steps:
 1. Go to (https://console.developers.google.com) and login with your google account.
-2....
+2.
 
-<br />
-You will also need to create a file in you user home directory with the name 'api-ktor.properties'<br />
- ...`C:\Users\<User_Name>\api-ktor.properties`
- In this file you should add those three properties, changing what is in `<` and `>` for yours respective keys.<br />
- ...```properties
+You will also need to create a file in you user home directory with the name 'api-ktor.properties'
+`C:\Users\<User_Name>\api-ktor.properties`
+ In this file you should add those three properties, changing what is in `<` and `>` for yours respective keys.
+ ```properties
 google.clientId=<YOUR_clientId_FROM_GOOGLE_CREDENTIALS>
 google.clientSecret=<YOUR_clientSecret_FROM_GOOGLE_CREDENTIALS>
 oauth.secretSignKey=239203972390479
