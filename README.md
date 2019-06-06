@@ -9,17 +9,6 @@
 | Postgre                                          | 11.3                |
 <br />
 
-## Endpoints
-
-### Get(/usuarios)
-
-### Post(/usuarios)
-
-### Put(/usuarios/{id})
-
-### Get(/usuarios/{id})
-<br />
-
 ## Guia Ferramentas
 
 ### Kotlin
