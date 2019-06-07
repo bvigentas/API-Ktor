@@ -22,18 +22,22 @@ import io.ktor.features.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.sessions.*
+import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.hex
 import io.ktor.websocket.WebSockets
+import org.apache.http.HttpStatus
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.postgresql.util.PSQLException
 import java.io.IOException
 
 class MySession(val userId: String)
 
+@KtorExperimentalAPI
 fun main (args: Array<String>) {
     embeddedServer(Netty, port = 8083) {
 
         install(WebSockets)
+
         install(Sessions) {
             cookie<MySession>("oauthSampleSessionId") {
                 val secretSignKey = hex(FileUtils.readProperty("oauth.secretSignKey"))
@@ -65,7 +69,12 @@ fun main (args: Array<String>) {
                     try {
                         val usuarios = usuarioDao.getUsuarios().map { UsuarioJson(it) }
                         call.respond(usuarios)
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
                     } catch (e: Exception) {
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -75,8 +84,14 @@ fun main (args: Array<String>) {
                         // val usuario = usuarioDao.getUsuarios().map { UsuarioJson(it) }.get(call.parameters["id"]!!.toInt() - 1)
                         val usuario = usuarioDao.getUsuario(call.parameters["id"]!!.toInt())
                         call.respond(usuario)
+                    } catch (e: NotFoundException) {
+                        call.respond(HttpStatusCode.NotFound)
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
                     } catch (e: Exception) {
-                        call.respond(e)
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -87,9 +102,12 @@ fun main (args: Array<String>) {
                         call.respond(usuario)
                     } catch(e: IOException){
                         call.respond("" + e.message)
-                    }
-                    catch (e: Exception) {
-                        call.respond(e)
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
+                    } catch (e: Exception) {
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -97,7 +115,7 @@ fun main (args: Array<String>) {
                     try {
                         var parameters = call.receive<UsuarioJson>()
 
-                        if(parameters.id != call.parameters["id"]!!.toInt()){
+                        if(parameters.id != call.parameters["id"]!!.toInt() && parameters.id != 0){
                             throw (IOException("Impossível alterar o id do usuário"))
                         }
 
@@ -109,12 +127,16 @@ fun main (args: Array<String>) {
 
                         call.respond(usuario)
 
+                    } catch (e: NotFoundException) {
+                        call.respond(HttpStatusCode.NotFound)
                     } catch(e: IOException){
                         call.respond("" + e.message)
-                    }
-                    catch (e: Exception) {
-                        call.respondText(e.toString())
-                        e.printStackTrace()
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
+                    } catch (e: Exception) {
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -122,6 +144,8 @@ fun main (args: Array<String>) {
                     try {
                         usuarioDao.deleteUsuario(call.parameters["id"]!!.toInt())
                         call.respond(mapOf(true to true))
+                    } catch (e: NotFoundException) {
+                        call.respond(HttpStatusCode.NotFound)
                     } catch (e: ExposedSQLException) {
                         call.respondText("Não foi possível deletar o usuário. Há uma comanda vinculada a ele.")
                     } catch (e: Exception) {
@@ -134,8 +158,12 @@ fun main (args: Array<String>) {
                         usuarioDao.deleteUsuarios()
                         call.respond(mapOf(true to true))
                     }
-                    catch (e: Exception) {
-                        call.respondText(e.toString())
+                    catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
+                    } catch (e: Exception) {
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -145,8 +173,14 @@ fun main (args: Array<String>) {
                     try {
                         val comanda = comandaDao.getComanda(call.parameters["id"]!!.toInt())
                         call.respond(comanda)
+                    } catch (e: NotFoundException) {
+                        call.respond(HttpStatusCode.NotFound)
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
                     } catch (e: Exception) {
-
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -154,8 +188,12 @@ fun main (args: Array<String>) {
                     try {
                         val comandas = comandaDao.getComandas().map { ComandaJson(it) }
                         call.respond(comandas)
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
                     } catch (e: Exception) {
-                        call.respond(e)
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -172,8 +210,16 @@ fun main (args: Array<String>) {
 
                         call.respond(comanda)
 
+                    } catch (e: NotFoundException) {
+                        call.respond(HttpStatusCode.NotFound)
+                    } catch (e: IOException) {
+                        call.respond("" + e.message)
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException) {
+                        call.respond(HttpStatusCode.BadRequest)
                     } catch (e: Exception) {
-                        call.respondText(e.toString())
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -182,9 +228,16 @@ fun main (args: Array<String>) {
                         var comanda = call.receive<ComandaJson>()
                         comanda = comandaDao.createComanda(comanda.idusuario, comanda.produtos, comanda.valorTotal)
                         call.respond(comanda)
+                    } catch(e: IOException){
+                        call.respond("" + e.message)
+                    } catch (e: ExposedSQLException){
+                        call.respond("Impossivel criar comanda, id do usuário é inexistente")
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
                     } catch (e: Exception) {
-//                    call.respond(e)
-                        e.printStackTrace()
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -192,8 +245,14 @@ fun main (args: Array<String>) {
                     try {
                         comandaDao.deleteComanda(call.parameters["id"]!!.toInt())
                         call.respond(mapOf("success" to mapOf("text" to "comanda removida")))
+                    } catch (e: NotFoundException) {
+                        call.respond(HttpStatusCode.NotFound)
+                    } catch (e: OAuth1aException) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    } catch (e: BadRequestException){
+                        call.respond(HttpStatusCode.BadRequest)
                     } catch (e: Exception) {
-                        call.respondText(e.toString())
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 }
 
@@ -226,7 +285,7 @@ fun main (args: Array<String>) {
 
 private fun ApplicationCall.redirectUrl(path: String): String {
     val defaultPort = if (request.origin.scheme == "http") 80 else 443
-    val hostPort = request.host()!! + request.port().let { port -> if (port == defaultPort) "" else ":$port" }
+    val hostPort = request.host() + request.port().let { port -> if (port == defaultPort) "" else ":$port" }
     val protocol = request.origin.scheme
     return "$protocol://$hostPort$path"
 }
