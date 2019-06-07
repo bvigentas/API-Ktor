@@ -1,4 +1,4 @@
-package br.furb.control
+package br.furb.security
 
 import br.furb.util.FileUtils
 import io.ktor.auth.OAuthServerSettings

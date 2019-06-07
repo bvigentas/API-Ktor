@@ -1,4 +1,4 @@
-package br.furb.dao
+package br.furb.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
