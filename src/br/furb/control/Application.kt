@@ -24,6 +24,8 @@ import io.ktor.server.netty.Netty
 import io.ktor.sessions.*
 import io.ktor.util.hex
 import io.ktor.websocket.WebSockets
+import org.jetbrains.exposed.exceptions.ExposedSQLException
+import org.postgresql.util.PSQLException
 import java.io.IOException
 
 class MySession(val userId: String)
@@ -94,6 +96,11 @@ fun main (args: Array<String>) {
                 put("/usuarios/{id}") {
                     try {
                         var parameters = call.receive<UsuarioJson>()
+
+                        if(parameters.id != call.parameters["id"]!!.toInt()){
+                            throw (IOException("Impossível alterar o id do usuário"))
+                        }
+
                         val usuario = usuarioDao.updateUsuario(
                             call.parameters["id"]!!.toInt(),
                             parameters.email,
@@ -115,6 +122,8 @@ fun main (args: Array<String>) {
                     try {
                         usuarioDao.deleteUsuario(call.parameters["id"]!!.toInt())
                         call.respond(mapOf(true to true))
+                    } catch (e: ExposedSQLException) {
+                        call.respondText("Não foi possível deletar o usuário. Há uma comanda vinculada a ele.")
                     } catch (e: Exception) {
                         call.respondText(e.toString())
                     }
@@ -124,7 +133,8 @@ fun main (args: Array<String>) {
                     try {
                         usuarioDao.deleteUsuarios()
                         call.respond(mapOf(true to true))
-                    } catch (e: Exception) {
+                    }
+                    catch (e: Exception) {
                         call.respondText(e.toString())
                     }
                 }
