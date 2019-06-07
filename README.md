@@ -54,4 +54,10 @@ google.clientId=<YOUR_clientId_FROM_GOOGLE_CREDENTIALS>
 google.clientSecret=<YOUR_clientSecret_FROM_GOOGLE_CREDENTIALS>
 oauth.secretSignKey=239203972390479
 ```
- 
+  ### Swagger
+To view the API documentation, you need to run the docker command below. Inform the directory of the swagger.json file in <directory>.
+
+URL Execution: http://localhost:8080/
+ ```bash
+ docker run -p 8081:8080 -e SWAGGER_JSON=/mnt/swagger -v <directory>:/mnt --name swagger swaggerapi/swagger-ui
+ ```
