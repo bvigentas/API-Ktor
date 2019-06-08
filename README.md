@@ -16,7 +16,7 @@ Used as main language in the project.<br />
 [https://kotlinlang.org/](https://kotlinlang.org/)
 
 ### Ktor
-Ktor is a framework developed by the JetBrains team made to create RESTful APIs using Kotlin.<br />
+Ktor is a framework developed by the JetBrains team to create RESTful APIs using Kotlin.<br />
 [https://ktor.io/servers/index.html](https://ktor.io/servers/index.html)
 
 ### Exposed
