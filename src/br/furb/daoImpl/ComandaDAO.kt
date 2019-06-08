@@ -1,31 +1,23 @@
-package br.furb.dao
+package br.furb.daoImpl
 
+import br.furb.config.DataBaseConfig
+import br.furb.dao.IDAO
 import br.furb.ktorAPI.br.furb.table.Comandas
 import br.furb.ktorAPI.br.furb.table.Usuarios
 import br.furb.model.Comanda
 import br.furb.model.ComandaJson
 import io.ktor.features.NotFoundException
+import io.ktor.util.KtorExperimentalAPI
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.IOException
 import java.math.BigDecimal
 
-class ComandaDAO {
-
-    fun authenticateComanda(produtosComanda: String, valorTotalComanda: BigDecimal){
-        if(produtosComanda.length < 3)
-        {
-            throw IOException("Nome de produto inválido")
-        }
-        else if(valorTotalComanda < BigDecimal(0)) {
-            throw IOException("Valor total da comanda inválido")
-        }
-    }
-
-    fun getComandas(): List<Comanda> {
+@KtorExperimentalAPI
+class ComandaDAO: IDAO<Comanda, ComandaJson> {
+    override fun listar(): List<Comanda> {
         DataBaseConfig.db
 
         val comandas = transaction {
@@ -36,7 +28,7 @@ class ComandaDAO {
         return comandas
     }
 
-    fun getComanda(id: Int) : ComandaJson {
+    override fun getUnique(id: Int): ComandaJson {
         DataBaseConfig.db
         try {
             val comanda_ret = transaction {
@@ -57,7 +49,7 @@ class ComandaDAO {
         }
     }
 
-    fun deleteComanda(id: Int) {
+    override fun delete(id: Int) {
         DataBaseConfig.db
         try {
             transaction {
@@ -71,59 +63,55 @@ class ComandaDAO {
         }
     }
 
-    fun createComanda(idUsuarioComanda: Int, produtosComanda: String, valorTotalComanda: BigDecimal): ComandaJson {
 
-        authenticateComanda(produtosComanda, valorTotalComanda)
-
+    override fun create(model: ComandaJson): ComandaJson {
         DataBaseConfig.db
+
         val comanda = transaction {
             SchemaUtils.create (Usuarios, Comandas)
             addLogger(StdOutSqlLogger)
             return@transaction Comanda.new {
-                idusuario = EntityID(idUsuarioComanda, Usuarios)
-                produtos = produtosComanda
-                valorTotal = valorTotalComanda
+
+                idusuario = EntityID(model.id, Usuarios)
+                produtos = model.produtos
+                valorTotal = model.valorTotal
             }
         }
 
         return ComandaJson(comanda.id.value, comanda.idusuario.value, comanda.produtos, comanda.valorTotal)
     }
 
-    fun updateComanda(id: Int, produtosComanda: String?, valorTotalComanda: BigDecimal?) : ComandaJson{
-
-        if(produtosComanda != null && valorTotalComanda != null)
-            authenticateComanda(produtosComanda, valorTotalComanda)
-
+    override fun update(id: Int, model: ComandaJson): ComandaJson {
         DataBaseConfig.db
-
         try {
             val comanda_ret = transaction {
                 SchemaUtils.create(Usuarios, Comandas)
                 addLogger(StdOutSqlLogger)
                 val comanda: Comanda = Comanda.findById(id)!!
 
-                if (produtosComanda == "" || valorTotalComanda == BigDecimal(0)) {
+                if (model.produtos == "" || model.valorTotal == BigDecimal(0)) {
                     val comandaNoBanco = Comanda.findById(id)
-                    if (valorTotalComanda == BigDecimal(0)) comanda.valorTotal =
-                        comandaNoBanco!!.valorTotal else comanda.valorTotal = valorTotalComanda!!
-                    if (produtosComanda == "") comanda.produtos = comandaNoBanco!!.produtos else comanda.produtos =
-                        produtosComanda!!
+                    if (model.valorTotal == BigDecimal(0)) comanda.valorTotal =
+                        comandaNoBanco!!.valorTotal else comanda.valorTotal = model.valorTotal
+                    if (model.produtos == "") comanda.produtos = comandaNoBanco!!.produtos else comanda.produtos =
+                        model.produtos
                 } else {
-                    comanda.produtos = produtosComanda!!
-                    comanda.valorTotal = valorTotalComanda!!
+                    comanda.produtos = model.produtos
+                    comanda.valorTotal = model.valorTotal
                 }
 
-                return@transaction ComandaJson(
-                    comanda.id.value,
-                    comanda.idusuario.value,
-                    comanda.produtos,
-                    comanda.valorTotal
-                )
+                return@transaction ComandaJson(comanda.id.value, comanda.idusuario.value, comanda.produtos, comanda.valorTotal)
+
             }
+
             return ComandaJson(comanda_ret.id, comanda_ret.idusuario, comanda_ret.produtos, comanda_ret.valorTotal)
         } catch (e: Exception){
             throw NotFoundException()
         }
+    }
+
+    override fun deleteAll() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }
