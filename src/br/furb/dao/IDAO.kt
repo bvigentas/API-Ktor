@@ -1,8 +1,5 @@
 package br.furb.dao
 
-import br.furb.model.ComandaJson
-import java.math.BigDecimal
-
 
 interface IDAO<T,A> {
     fun listar(): List<T>

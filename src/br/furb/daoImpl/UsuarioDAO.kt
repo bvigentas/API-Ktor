@@ -6,11 +6,14 @@ import br.furb.ktorAPI.br.furb.table.Comandas
 import br.furb.ktorAPI.br.furb.table.Usuarios
 import br.furb.model.Usuario
 import br.furb.model.UsuarioJson
+import io.ktor.features.NotFoundException
+import io.ktor.util.KtorExperimentalAPI
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
+@KtorExperimentalAPI
 class UsuarioDAO: IDAO<Usuario, UsuarioJson> {
     override fun listar(): List<Usuario> {
         DataBaseConfig.db
@@ -38,11 +41,15 @@ class UsuarioDAO: IDAO<Usuario, UsuarioJson> {
     override fun delete(id: Int) {
         DataBaseConfig.db
 
-        transaction {
-            SchemaUtils.create (Usuarios, Comandas)
-            addLogger(StdOutSqlLogger)
-            val usuario = Usuario.findById(id)
-            usuario?.delete()
+        try {
+            transaction {
+                SchemaUtils.create(Usuarios, Comandas)
+                addLogger(StdOutSqlLogger)
+                val usuario = Usuario.findById(id)
+                usuario?.delete()
+            }
+        } catch (e: Exception){
+            throw NotFoundException()
         }
     }
 
@@ -63,25 +70,30 @@ class UsuarioDAO: IDAO<Usuario, UsuarioJson> {
 
     override fun update(id: Int, model: UsuarioJson): UsuarioJson {
         DataBaseConfig.db
-        val usuario = transaction {
 
-            SchemaUtils.create(Usuarios, Comandas)
-            addLogger(StdOutSqlLogger)
-            val user: Usuario = Usuario.findById(id)!!
+        try {
+            val usuario = transaction {
 
-            if (model.senha == "" || model.email == "") {
-                val usuarioNoBanco = Usuario.findById(id)
-                if (model.email == "") user.email = usuarioNoBanco!!.email else user.email = model.email
-                if (model.senha == "") user.senha = usuarioNoBanco!!.senha else user.senha = model.senha
-            } else {
-                user.email = model.email
-                user.senha = model.senha
+                SchemaUtils.create(Usuarios, Comandas)
+                addLogger(StdOutSqlLogger)
+                val user: Usuario = Usuario.findById(id)!!
+
+                if (model.senha == "" || model.email == "") {
+                    val usuarioNoBanco = Usuario.findById(id)
+                    if (model.email == "") user.email = usuarioNoBanco!!.email else user.email = model.email
+                    if (model.senha == "") user.senha = usuarioNoBanco!!.senha else user.senha = model.senha
+                } else {
+                    user.email = model.email
+                    user.senha = model.senha
+                }
+
+                return@transaction UsuarioJson(user.id.value, user.email, user.senha)
             }
 
-            return@transaction UsuarioJson(user.id.value, user.email, user.senha)
+            return UsuarioJson(usuario.id, usuario.email, usuario.senha)
+        } catch (e: Exception){
+            throw NotFoundException()
         }
-
-        return UsuarioJson(usuario.id, usuario.email, usuario.senha)
     }
 
     override fun deleteAll() {

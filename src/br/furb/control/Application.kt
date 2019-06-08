@@ -1,31 +1,33 @@
 package br.furb.ktorAPI.br.furb.model
 
+import br.furb.control.comanda.comanda
+import br.furb.control.usuario.usuario
 import br.furb.security.AuthentificationOAuth
-import br.furb.daoImpl.ComandaDAO
-import br.furb.daoImpl.UsuarioDAO
-import br.furb.model.*
 import br.furb.util.FileUtils
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.application.*
+import io.ktor.application.ApplicationCall
+import io.ktor.application.call
+import io.ktor.application.install
 import io.ktor.auth.*
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.routing.*
-import io.ktor.gson.*
-import io.ktor.features.*
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.origin
+import io.ktor.gson.gson
+import io.ktor.request.host
+import io.ktor.request.port
+import io.ktor.response.respondRedirect
+import io.ktor.routing.route
+import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.sessions.*
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.hex
 import io.ktor.websocket.WebSockets
-import br.furb.control.comanda.comanda
-import br.furb.control.usuario.usuario
 
 class MySession(val userId: String)
 
@@ -34,6 +36,7 @@ fun main (args: Array<String>) {
     embeddedServer(Netty, port = 8083) {
 
         install(WebSockets)
+
         install(Sessions) {
             cookie<MySession>("oauthSampleSessionId") {
                 val secretSignKey = hex(FileUtils.readProperty("oauth.secretSignKey"))
