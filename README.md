@@ -35,6 +35,10 @@ Travis CI was used to make sure no pull request would break the code in the mast
 Database used in the project.<br />
 [https://www.postgresql.org/](https://www.postgresql.org/)
 
+### Swagger
+API documentation used in the project.<br />
+[http://editor.swagger.io/](http://editor.swagger.io/)
+
 ### Gradle
 Build tool used in the project.<br />
 [https://gradle.org/](https://gradle.org/)
