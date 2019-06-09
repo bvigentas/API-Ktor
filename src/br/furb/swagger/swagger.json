@@ -5,7 +5,7 @@
     "title": "API Ktor",
     "description": "Administra a movimentação de usuários e comandas."
   },
-  "host": "localhost:8080",
+  "host": "me.api-ktor.com:8083",
   "basePath": "/RestAPIFurb/",
   "tags": [
     {
@@ -36,19 +36,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Consulta efetuada com sucesso",
+            "description": "Ok",
             "schema": {
               "$ref": "#/definitions/Usuario"
             }
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "401": {
-            "description": "Requisição não autorizada"
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Erro no servidor"
+            "description": "Internal Server Error"
           }
         }
       },
@@ -81,10 +81,10 @@
             }
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "500": {
-            "description": "Erro interno no servidor"
+            "description": "Internal Server Error"
           }
         }
       },
@@ -101,13 +101,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Exclusão efetuada com sucesso"
+            "description": "Ok"
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Usuários não está funcionando"
+            "description": "Not Found"
           }
         }
       }
@@ -135,19 +135,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Consulta efetuada com sucesso",
+            "description": "Ok",
             "schema": {
               "$ref": "#/definitions/Usuario"
             }
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "401": {
-            "description": "Requisição não autorizada"
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Erro no servidor"
+            "description": "Internal Server Error"
           }
         }
       },
@@ -177,13 +177,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Alteração efetuada com sucesso"
+            "description": "Ok"
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Usuários não está funcionando"
+            "description": "Not Found"
           }
         }
       },
@@ -209,13 +209,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Exclusão efetuada com sucesso"
+            "description": "Ok"
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Usuários não está funcionando"
+            "description": "Not Found"
           }
         }
       }
@@ -234,19 +234,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Consulta efetuada com sucesso",
+            "description": "Ok",
             "schema": {
               "$ref": "#/definitions/Comanda"
             }
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "401": {
-            "description": "Requisição não autorizada"
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Erro no servidor"
+            "description": "Internal Server Error"
           }
         }
       },
@@ -279,10 +279,10 @@
             }
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "500": {
-            "description": "Erro interno no servidor"
+            "description": "Internal Server Error"
           }
         }
       }
@@ -310,19 +310,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Consulta efetuada com sucesso",
+            "description": "Ok",
             "schema": {
               "$ref": "#/definitions/Comanda"
             }
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "401": {
-            "description": "Requisição não autorizada"
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Erro no servidor"
+            "description": "Internal Server Error"
           }
         }
       },
@@ -352,13 +352,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Alteração efetuada com sucesso"
+            "description": "Ok"
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Comandas não está funcionando"
+            "description": "Not Found"
           }
         }
       },
@@ -384,13 +384,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Alteração efetuada com sucesso"
+            "description": "Ok"
           },
           "400": {
-            "description": "Requisição inválida"
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Comandas não está funcionando"
+            "description": "Not Found"
           }
         }
       }
