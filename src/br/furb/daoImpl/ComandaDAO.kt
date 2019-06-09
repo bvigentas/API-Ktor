@@ -72,7 +72,7 @@ class ComandaDAO: IDAO<Comanda, ComandaJson> {
             addLogger(StdOutSqlLogger)
             return@transaction Comanda.new {
 
-                idusuario = EntityID(model.id, Usuarios)
+                idusuario = EntityID(model.idusuario, Usuarios)
                 produtos = model.produtos
                 valorTotal = model.valorTotal
             }
